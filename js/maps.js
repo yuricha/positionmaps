@@ -2,29 +2,28 @@
  * Created by Yuri on 26/05/2016.
  */
 
+
 var path_coords = [{
-    lat: 55.77248,
-    lng: 37.67913
+    lat: -16.417672,
+    lng: -71.517980
 }, {
-    lat: 55.77249,
-    lng: 37.67866
+    lat: -16.411908,
+    lng: -71.521075
 }, {
-    lat: 55.77558,
-    lng: 37.67776
+    lat: -16.407502,
+    lng: -71.524402
 }, {
-    lat: 55.77594,
-    lng: 37.67701
-}, {
-    lat: 55.777,
-    lng: 37.67977
+    lat: -16.405176,
+    lng: -71.521638
 }];
+
 var path_bounds;
 function initialize() {
-    map_center = new google.maps.LatLng(55.774593, 37.679367);
+    map_center = new google.maps.LatLng(-16.407009, -71.520284);
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
         center: map_center,
-        zoom: 16,
+        zoom: 12,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(mapCanvas, mapOptions);
