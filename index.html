@@ -24,7 +24,12 @@
     }
 </style>
 <script>
-    $(document).ready(initialize);
+    $(function () {
+        var options={url:'test' };
+        var data ={};
+        var map = new mapPosition(options,data);
+        map.queryToken();
+    });
 </script>
 </body>
 </html>
