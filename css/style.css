@@ -4,3 +4,83 @@ body,
     width: 100%;
     height: 100%;
 }
+label {
+    cursor: default;
+    font-size: 14px;
+}
+select {
+    background-image: url('../images/arrow.png');
+    background-repeat: no-repeat;
+    background-position: 300px;
+    width: 153px;
+    padding: 7px;
+    margin-top: 8px;
+    font-family: Cursive;
+    line-height: 1;
+    border-radius: 2px;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 15px;
+    -webkit-appearance: none;
+    box-shadow: inset 0 0 10px 0 rgba(0,0,0,0.6);
+    outline: none;
+}
+.paginacion {
+    margin:20px 0;
+}
+
+.paginacion ul {
+    list-style:none;
+    text-align: center;
+}
+
+.paginacion ul li {
+    display:inline-block;
+    margin-right:10px;
+}
+
+.paginacion ul li a {
+    display:block;
+    padding:10px 20px;
+    color:#fff;
+    background:#024959;
+    text-decoration: none;
+}
+
+.paginacion ul li a:hover {
+    background:#037E8C;
+}
+
+.paginacion ul li .active {
+    background:#037E8C;
+    font-weight:bold;
+}
+.paginacion {
+    margin:20px 0;
+}
+
+.paginacion ul {
+    list-style:none;
+    text-align: center;
+}
+
+.paginacion ul li {
+    display:inline-block;
+    margin-right:10px;
+}
+
+.paginacion ul li a {
+    display:block;
+    padding:10px 20px;
+    color:#fff;
+    background:#024959;
+    text-decoration: none;
+}
+
+.paginacion ul li a:hover {
+    background:#037E8C;
+}
+
+.paginacion ul li .active {
+    background:#037E8C;
+    font-weight:bold;
+}
