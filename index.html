@@ -8,30 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>set position v1.0</title>
     <script src="js/jquery-1.12.4.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/maps.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 <body>
 <div id="map"></div>
 <div id="legend">
-
-    <div id ="features">
-        <label for="status">Estado : </label>
-        <select name="status">
-            <option value="1">Volvo</option>
-            <option value="2">Saab</option>
-            <option value="3">Mercedes</option>
-            <option value="4">Audi</option>
-        </select>
-        <label for="tipo">Tipo : </label>
-        <select name="tipo">
-            <option value="1">Volvo</option>
-            <option value="2">Saab</option>
-            <option value="3">Mercedes</option>
-            <option value="4">Audi</option>
-        </select>
-    </div>
     <section class="paginacion">
         <ul>
             <li><a href="#" class="active">1</a></li>
@@ -44,7 +29,46 @@
 
     leyenda
 </div>
+<div id="container-filter">
+    <fieldset class="form-group" style="width: 180px;">
+        <div class="row">
+            <div class="col-md-4">
+                <label id="status">Estado</label>
+                <select name="status">
 
+                </select>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-4">
+                <label id="tipo">Tipo</label>
+                <select name="tipo">
+
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+            <label id="morosidad">Morosidad</label>
+            <select name="morosidad">
+
+            </select>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <h1>Processing test...</h1>
+    </div>
+    <div class="modal-body">
+        <div class="progress progress-striped active">
+            <div class="bar" style="width: 100%;"></div>
+        </div>
+    </div>
+</div>
 <style>
     #legend {
         background: white;

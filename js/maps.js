@@ -38,6 +38,7 @@ mapPosition.prototype.queryToken=function(){
     });
     /**/
     this.initialize();
+
 }
 mapPosition.prototype.convertDate = function(inputFormat){
     function pad(s) { return (s < 10) ? '0' + s : s; }
@@ -85,7 +86,7 @@ mapPosition.prototype.drawPoints = function(){
         this.addMarker((i + 1).toString(), path_coords[i], map,pinColor);
         var div = document.createElement('div');
 
-        div.innerHTML = '<div id='+i+' style="background-color:#'+pinColor+'"> ' +pinColor + '</div>';
+        div.innerHTML = '<div  id='+i+' style="width :100px;background-color:#'+pinColor+'"> ' +pinColor + '</div>';
         legend.appendChild(div);
         eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords[i],map:map},function(e) {
             e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
@@ -99,6 +100,11 @@ mapPosition.prototype.drawPoints = function(){
     this.resize(map);
     google.maps.event.addDomListener(window, 'resize',this.resize);
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+    var container = document.getElementById('container-filter');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container);
+    var container2 = document.getElementById('pleaseWaitDialog');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container2);
+    this.status();
 }
 
 mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
@@ -140,5 +146,40 @@ mapPosition.prototype.selectMarker= function (obj , map) {
 mapPosition.prototype.resize= function (map) {
     map.setCenter(this.map_center);
     map.fitBounds(path_bounds);
+}
+
+
+mapPosition.prototype.status= function () {
+    var estadopreventa = [
+        {
+            codigo : 1,
+            descripcion : "PENDIENTE DE VISITA",
+            color : "#FAC905"
+        },
+        {
+            codigo : 2,
+            descripcion : "HIZO PEDIDO",
+            color : "#FA0536"
+        },
+        {
+            codigo : 3,
+            descripcion : "NO HIZO PEDIDO : SIN STOCK",
+            color : "#418716"
+        },
+        {
+            codigo : 4,
+            descripcion : "NO HIZO PEDIDO : SIN DINERO",
+            color : "#2579CD"
+        }
+    ]
+    this.estadopreventa = estadopreventa;
+    var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing status...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+    pleaseWaitDiv.modal();
+}
+mapPosition.prototype.price= function () {
+
+}
+mapPosition.prototype.morosidad= function () {
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
