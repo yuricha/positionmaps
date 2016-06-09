@@ -173,13 +173,48 @@ mapPosition.prototype.status= function () {
         }
     ]
     this.estadopreventa = estadopreventa;
-    var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing status...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
-    pleaseWaitDiv.modal();
+
+    //var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing status...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+    //pleaseWaitDiv.modal();
 }
 mapPosition.prototype.price= function () {
-
+ var tipoprecio = [
+        {
+            codigo : 1,
+            nombre : "ESPECIAL 1"
+        },
+        {
+            codigo : 2,
+            nombre : "CLIENTE VIP"
+        },
+        {
+            codigo : 3,
+            nombre : "MAYORISTA"
+        },
+        {
+            codigo : 4,
+            nombre : "MINORISTA"
+        },
+        {
+            codigo : 5,
+            nombre : "VETERINARIO"
+        }
+    ]
 }
 mapPosition.prototype.morosidad= function () {
-
+var morosidad = [
+        {
+            codigo : 1,
+            descripcion : "DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO"
+        },
+        {
+            codigo : 2,
+            descripcion : "DEUDA NORMAL"
+        },
+        {
+            codigo : 3,
+            descripcion : "SIN DEUDA"
+        },
+    ]
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
