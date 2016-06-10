@@ -5,6 +5,118 @@
     ,apagar ventana flotante en cambio de direccion,, sesion
      */
 //var pinColor = "FE7569";
+
+var account= [
+    {
+        codigo : 14,
+        orden : 1,
+        nombres : "CARMEN DOROTEA",
+        apellidos : "AGUEDO URDAY",
+        direccion : "MCDO.SAN CAMILO PTO.5 CERCADO",
+        latitud : "-16.402472781080736",
+        longitud : "-71.5349422768486",
+        deudatotal : 0,
+        lineacredito : 1000,
+        titular : {
+            codigo : 5,
+            nombres : "OSCAR",
+            apellidos : "GUZMAN"
+        },
+        tipoprecio : {
+            codigo : 1
+        },
+        estadopreventa : {
+            codigo : 1
+        },
+        morosidad : {
+            codigo : 3
+        },
+        visitaclientedetalle : [
+        ]
+    },
+    {
+        codigo : 28,
+        orden : 2,
+        nombres : "GERARDO",
+        apellidos : "AMBROSIO SUCASACA",
+        direccion : "MCDO.ZAMACOLA PTO.21 C.COLORADO",
+        latitud : "-16.35162272072182",
+        longitud : "-71.56288016594772",
+        deudatotal : 3500,
+        lineacredito : 4000,
+        titular : {
+            codigo : 5,
+            nombres : "OSCAR",
+            apellidos : "GUZMAN"
+        },
+        tipoprecio : {
+            codigo : 2
+        },
+        estadopreventa : {
+            codigo : 2
+        },
+        morosidad : {
+            codigo : 1
+        },
+        visitaclientedetalle : [
+        ]
+    },
+    {
+        codigo : 32,
+        orden : 3,
+        nombres : "REGINA",
+        apellidos : "HANCO QUISPE",
+        direccion : "MCDO.STA ROSA PTO.102 CONO SUR TACNA",
+        latitud : "-16.398006919391225",
+        longitud : "-71.53760433197021",
+        deudatotal : 500,
+        lineacredito : 1000,
+        titular : {
+            codigo : 5,
+            nombres : "OSCAR",
+            apellidos : "GUZMAN"
+        },
+        tipoprecio : {
+            codigo : 1
+        },
+        estadopreventa : {
+            codigo : 4
+        },
+        morosidad : {
+            codigo : 2
+        },
+        visitaclientedetalle : [
+        ]
+    },
+    {
+        codigo : 34,
+        orden : 4,
+        nombres : "BERTHA REYNA",
+        apellidos : "ANGELO GUTIERREZ",
+        direccion : "AV AVIACION 203-A ZAMACOLA",
+        latitud : "-16.354916051799975",
+        longitud : "-71.56721331193694",
+        deudatotal : 0,
+        lineacredito : 0,
+        titular : {
+            codigo : 5,
+            nombres : "OSCAR",
+            apellidos : "GUZMAN"
+        },
+        tipoprecio : {
+            codigo : 1
+        },
+        estadopreventa : {
+            codigo : 1
+        },
+        morosidad : {
+            codigo : 3
+        },
+        visitaclientedetalle : [
+        ]
+    }
+]
+/*
 var path_coords = [{
     lat: -16.417672,
     lng: -71.517980
@@ -18,11 +130,13 @@ var path_coords = [{
     lat: -16.405176,
     lng: -71.521638
 }];
+/**/
 var path_bounds;
 var mapPosition =function(options,data){
     this.url=options.url;
     this.data = data;
     this.params = {header:null,body:null};
+    this.events();
 }
 mapPosition.prototype.queryToken=function(){
     var date = this.convertDate(new Date());
@@ -37,7 +151,10 @@ mapPosition.prototype.queryToken=function(){
         }
     });
     /**/
-    this.initialize();
+
+    this.status();
+    this.price();
+    this.morosidad();
 
 }
 mapPosition.prototype.convertDate = function(inputFormat){
@@ -73,30 +190,37 @@ mapPosition.prototype.initialize = function () {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(mapCanvas, mapOptions);
+    this.map=map;
+
     this.drawPoints(map);
 }
 
 mapPosition.prototype.drawPoints = function(){
-    var myArray = ["4387FD","03D4E5","E503C2","E51F03","E59203","C6E503"];
+    //var myArray = ["4387FD","03D4E5","E503C2","E51F03","E59203","C6E503"];
     var eventClick = [];
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
-    for (var i = 0; i < path_coords.length; i++) {
-        var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
-        this.addMarker((i + 1).toString(), path_coords[i], map,pinColor);
+    for (var i = 0; i < account.length; i++) {
+        //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
+        var arrayObjectPosition = arrayObjectIndexOf(this.estadopreventa, account[i].estadopreventa.codigo, "codigo");
+        var pinColor = this.estadopreventa[arrayObjectPosition].color;
+        var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
+        this.addMarker((i + 1).toString(), path_coords, map,pinColor.substring(1));
         var div = document.createElement('div');
 
-        div.innerHTML = '<div  id='+i+' style="width :100px;background-color:#'+pinColor+'"> ' +pinColor + '</div>';
+        div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> ' +account[i].nombres + '</div>';
         legend.appendChild(div);
-        eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords[i],map:map},function(e) {
+        eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
             e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
         });
         path_bounds.extend(
             new google.maps.LatLng(
-                path_coords[i].lat,
-                path_coords[i].lng));
+                account[i].latitud,
+                account[i].longitud));
+        /**/
     }
     //flightPath.setMap(map);
+
     this.resize(map);
     google.maps.event.addDomListener(window, 'resize',this.resize);
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
@@ -105,6 +229,7 @@ mapPosition.prototype.drawPoints = function(){
     var container2 = document.getElementById('pleaseWaitDialog');
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container2);
     this.status();
+    /**/
 }
 
 mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
@@ -200,6 +325,7 @@ mapPosition.prototype.price= function () {
             nombre : "VETERINARIO"
         }
     ]
+    this.tipoprecio= tipoprecio;
 }
 mapPosition.prototype.morosidad= function () {
 var morosidad = [
@@ -216,5 +342,23 @@ var morosidad = [
             descripcion : "SIN DEUDA"
         },
     ]
+    this.morosidad = morosidad;
+    this.initialize();
+}
+
+mapPosition.prototype.events = function(){
+    $('.alert-info').click({OBJ:this},function(e){
+        e.data.OBJ.resize(e.data.OBJ.map);
+    });
+}
+function arrayObjectIndexOf(myArray, searchTerm, property) {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i][property] === searchTerm) return i;
+    }
+    return -1;
+}
+
+function insetHtmlSelect(container,arrayList){
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

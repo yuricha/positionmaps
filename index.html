@@ -19,23 +19,25 @@
 <div id="legend">
     <section class="paginacion">
         <ul>
-            <li><a href="#" class="active">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
+            <li><a href="#"> < </a></li>
+            <li><a href="#">></a> </li>
         </ul>
     </section>
 
     leyenda
 </div>
 <div id="container-filter">
-    <fieldset class="form-group" style="width: 180px;">
+    <button class="alert-info">vista general</button>
+    <fieldset class="form-group" style="width: 154px;">
         <div class="row">
             <div class="col-md-4">
                 <label id="status">Estado</label>
                 <select name="status">
-
+                    <option value="0">Todos</option>
+                    <option value="1">PENDIENTE DE VISITA</option>
+                    <option value="2">HIZO PEDIDO</option>
+                    <option value="3">NO HIZO PEDIDO : SIN STOCK</option>
+                    <option value="4">NO HIZO PEDIDO : SIN DINERO</option>
                 </select>
             </div>
         </div>
@@ -44,7 +46,12 @@
             <div class="col-md-4">
                 <label id="tipo">Tipo</label>
                 <select name="tipo">
-
+                    <option value="0">Todos</option>
+                    <option value="1">ESPECIAL 1</option>
+                    <option value="2">CLIENTE VIP</option>
+                    <option value="3">MAYORISTA</option>
+                    <option value="4">MINORISTA</option>
+                    <option value="5">VETERINARIO</option>
                 </select>
             </div>
         </div>
@@ -53,12 +60,16 @@
             <div class="col-md-4">
             <label id="morosidad">Morosidad</label>
             <select name="morosidad">
-
+                <option value="0">Todos</option>
+                <option value="1">DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO</option>
+                 <option value="2">DEUDA NORMAL</option>
+                 <option value="2">SIN DEUDA</option>
             </select>
             </div>
         </div>
     </fieldset>
 </div>
+<!--
 <div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <h1>Processing test...</h1>
@@ -69,6 +80,7 @@
         </div>
     </div>
 </div>
+-->
 <style>
     #legend {
         background: white;
