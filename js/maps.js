@@ -198,21 +198,27 @@ mapPosition.prototype.initialize = function () {
 mapPosition.prototype.drawPoints = function(){
     //var myArray = ["4387FD","03D4E5","E503C2","E51F03","E59203","C6E503"];
     var eventClick = [];
+    var arrayColor = [];
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
         var arrayObjectPosition = arrayObjectIndexOf(this.estadopreventa, account[i].estadopreventa.codigo, "codigo");
+
         var pinColor = this.estadopreventa[arrayObjectPosition].color;
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
         this.addMarker((i + 1).toString(), path_coords, map,pinColor.substring(1));
-        var div = document.createElement('div');
 
-        div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> ' +account[i].nombres + '</div>';
-        legend.appendChild(div);
-        eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
-            e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
-        });
+        if(arrayColor.indexOf(arrayObjectPosition)==-1){
+            arrayColor.push(arrayObjectPosition);
+            var div = document.createElement('div');
+            div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>';
+            legend.appendChild(div);
+         /*   eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
+                e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
+            });
+            /**/
+        }
         path_bounds.extend(
             new google.maps.LatLng(
                 account[i].latitud,
@@ -229,7 +235,6 @@ mapPosition.prototype.drawPoints = function(){
     var container2 = document.getElementById('pleaseWaitDialog');
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container2);
     this.status();
-    /**/
 }
 
 mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
