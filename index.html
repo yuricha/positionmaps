@@ -15,72 +15,85 @@
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 <body>
-<div id="map"></div>
-<div id="legend">
-    <section class="paginacion">
-        <ul>
-            <li><a href="#"> < </a></li>
-            <li><a href="#">></a> </li>
-        </ul>
+
+<!--start material-->
+<section class="wrapper">
+
+    <section class="material-design-hamburger">
+        <button class="material-design-hamburger__icon">
+            <span class="material-design-hamburger__layer"></span>
+        </button>
     </section>
 
-    leyenda
-</div>
-<div id="container-filter">
-    <button class="alert-info">vista general</button>
-    <fieldset class="form-group" style="width: 154px;">
-        <div class="row">
-            <div class="col-md-4">
-                <label id="status">Estado</label>
-                <select name="status">
-                    <option value="0">Todos</option>
-                    <option value="1">PENDIENTE DE VISITA</option>
-                    <option value="2">HIZO PEDIDO</option>
-                    <option value="3">NO HIZO PEDIDO : SIN STOCK</option>
-                    <option value="4">NO HIZO PEDIDO : SIN DINERO</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
+    <section class="menu menu--off" style="z-index: 1;">
+        <!--
+        <div>Android's Material Design Hamburger Animation</div>
+        <div>Adapted for the web by <a href="https://swirlycheetah.com" target="_blank">Chris Wheatley</a></div>
+        <div><a href="https://github.com/swirlycheetah/material-design-hamburger" target="_blank">Available on GitHub</a></div>
+        <div><a href="https://twitter.com/swirlycheetah" target="_blank">Follow me on Twitter @swirlycheetah</a></div>-->
 
-            <div class="col-md-4">
-                <label id="tipo">Tipo</label>
-                <select name="tipo">
-                    <option value="0">Todos</option>
-                    <option value="1">ESPECIAL 1</option>
-                    <option value="2">CLIENTE VIP</option>
-                    <option value="3">MAYORISTA</option>
-                    <option value="4">MINORISTA</option>
-                    <option value="5">VETERINARIO</option>
-                </select>
-            </div>
+        <div id="legend">
+            <section class="paginacion">
+                <ul>
+                    <li><a href="#"> < </a></li>
+                    <li><a href="#">></a> </li>
+                </ul>
+            </section>
+            leyenda
         </div>
 
-        <div class="row">
-            <div class="col-md-4">
-            <label id="morosidad">Morosidad</label>
-            <select name="morosidad">
-                <option value="0">Todos</option>
-                <option value="1">DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO</option>
-                 <option value="2">DEUDA NORMAL</option>
-                 <option value="2">SIN DEUDA</option>
-            </select>
-            </div>
+        <div id="container-filter">
+            <button class="alert-info">vista general</button>
+            <fieldset class="form-group" style="width: 154px;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label id="status">Estado</label>
+                        <select name="status">
+                            <option value="0">Todos</option>
+                            <option value="1">PENDIENTE DE VISITA</option>
+                            <option value="2">HIZO PEDIDO</option>
+                            <option value="3">NO HIZO PEDIDO : SIN STOCK</option>
+                            <option value="4">NO HIZO PEDIDO : SIN DINERO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label id="tipo">Tipo</label>
+                        <select name="tipo">
+                            <option value="0">Todos</option>
+                            <option value="1">ESPECIAL 1</option>
+                            <option value="2">CLIENTE VIP</option>
+                            <option value="3">MAYORISTA</option>
+                            <option value="4">MINORISTA</option>
+                            <option value="5">VETERINARIO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label id="morosidad">Morosidad</label>
+                        <select name="morosidad">
+                            <option value="0">Todos</option>
+                            <option value="1">DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO</option>
+                            <option value="2">DEUDA NORMAL</option>
+                            <option value="2">SIN DEUDA</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
         </div>
-    </fieldset>
-</div>
-<!--
-<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <h1>Processing test...</h1>
-    </div>
-    <div class="modal-body">
-        <div class="progress progress-striped active">
-            <div class="bar" style="width: 100%;"></div>
-        </div>
-    </div>
-</div>
--->
+
+    </section>
+
+</section>
+<!--end material-->
+
+<div id="map"></div>
+
+
 <style>
     #legend {
         background: white;
@@ -89,6 +102,29 @@
 </style>
 <script>
     $(function () {
+
+        'use strict';
+
+        document.querySelector('.material-design-hamburger__icon').addEventListener(
+                'click',
+                function() {
+                    var child;
+
+                    document.body.classList.toggle('background--blur');
+                    this.parentNode.nextElementSibling.classList.toggle('menu--on');
+
+                    child = this.childNodes[1].classList;
+
+                    if (child.contains('material-design-hamburger__icon--to-arrow')) {
+                        child.remove('material-design-hamburger__icon--to-arrow');
+                        child.add('material-design-hamburger__icon--from-arrow');
+                    } else {
+                        child.remove('material-design-hamburger__icon--from-arrow');
+                        child.add('material-design-hamburger__icon--to-arrow');
+                    }
+
+                });
+        /*------------------------------------------------------------------------------------------------------*/
         var options={url:'test' };
         var data ={};
         var map = new mapPosition(options,data);

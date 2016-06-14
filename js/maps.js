@@ -229,11 +229,16 @@ mapPosition.prototype.drawPoints = function(){
 
     this.resize(map);
     google.maps.event.addDomListener(window, 'resize',this.resize);
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-    var container = document.getElementById('container-filter');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container);
-    var container2 = document.getElementById('pleaseWaitDialog');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container2);
+    //map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+
+    //var container = document.getElementById('container-filter');
+    //map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container);
+
+    /*----------------------material--------------------*/
+    var material = document.getElementById('wrapper');
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(material);
+
+
     this.status();
 }
 
