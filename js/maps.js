@@ -137,6 +137,8 @@ var mapPosition =function(options,data){
     this.data = data;
     this.params = {header:null,body:null};
     this.markers =[];
+    this.pathCoord=[];
+    this.paginationPosition =0;
     this.events();
 }
 mapPosition.prototype.queryToken=function(){
@@ -202,6 +204,7 @@ mapPosition.prototype.drawPoints = function(){
     var arrayColor = [];
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
+    this.totalCoord = account.length;
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
         var arrayObjectPosition = arrayObjectIndexOf(this.estadopreventa, account[i].estadopreventa.codigo, "codigo");
@@ -216,7 +219,8 @@ mapPosition.prototype.drawPoints = function(){
             var div = document.createElement('div');
             div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> '+account[i].estadopreventa.codigo+'&nbsp;</div>';
             legend.appendChild(div);
-         /*   eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
+            this.pathCoord[i]=path_coords;
+            /*eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
                 e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
             });
             /**/
@@ -225,7 +229,6 @@ mapPosition.prototype.drawPoints = function(){
             new google.maps.LatLng(
                 account[i].latitud,
                 account[i].longitud));
-        /**/
     }
     //flightPath.setMap(map);
 
@@ -410,10 +413,10 @@ mapPosition.prototype.events = function(){
     });
 
     $('.prev').click({OBJ:this},function(e){
-        e.data.OBJ.pagination();
+        e.data.OBJ.pagination(0);
     });
     $('.next').click({OBJ:this},function(e){
-        e.data.OBJ.pagination();
+        e.data.OBJ.pagination(1);
     });
 }
 mapPosition.prototype.filter = function ($this,selectFilter) {
@@ -501,7 +504,17 @@ mapPosition.prototype.cleanFilter = function () {
         }
     }
 }
-mapPosition.prototype.pagination = function () {
-    
+mapPosition.prototype.pagination = function (action) {
+    var pos=0;
+    var total = this.totalCoord;
+    if(1){
+        if(action==1)pos = this.paginationPosition+ 1;
+        else  pos = this.paginationPosition -1;
+    }
+
+    if(total>pos)this.paginationPosition=pos;
+    else pos =1;
+    this.selectMarker(this.pathCoord[pos-1],this.map);
+    $('#position').html(pos);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
