@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta charset="utf-8">
     <meta name="author" content="EYuri">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>set position v1.0</title>
     <script src="js/jquery-1.12.4.js"></script>
@@ -19,74 +18,58 @@
 <!--start material-->
 <section class="wrapper">
 
-    <section class="material-design-hamburger">
-        <button class="material-design-hamburger__icon">
-            <span class="material-design-hamburger__layer"></span>
-        </button>
-    </section>
-
-    <section class="menu menu--off" style="z-index: 1;">
-        <!--
-        <div>Android's Material Design Hamburger Animation</div>
-        <div>Adapted for the web by <a href="https://swirlycheetah.com" target="_blank">Chris Wheatley</a></div>
-        <div><a href="https://github.com/swirlycheetah/material-design-hamburger" target="_blank">Available on GitHub</a></div>
-        <div><a href="https://twitter.com/swirlycheetah" target="_blank">Follow me on Twitter @swirlycheetah</a></div>-->
-
-        <div id="legend">
-            <section class="paginacion">
-                <ul>
-                    <li><a href="#"> < </a></li>
-                    <li><a href="#">></a> </li>
-                </ul>
-            </section>
-            leyenda
+    <div class="hamburger hamburger--arrow">
+        <div class="hamburger-box">
+            <div class="hamburger-inner"></div>
         </div>
+    </div>
+    <div class="span6 offset3 ">
+        <section id="container-gral" class="menu menu--off" style="z-index: 1;">
+            <div id="container-filter">
+                <button class="alert-info">vista general</button>
+                <fieldset class="form-group" style="width: 154px;">
+                    <div class="row">
+                        <div class="col-md-2">
 
-        <div id="container-filter">
-            <button class="alert-info">vista general</button>
-            <fieldset class="form-group" style="width: 154px;">
-                <div class="row">
-                    <div class="col-md-4">
-                        <label id="status">Estado</label>
-                        <select name="status">
-                            <option value="0">Todos</option>
-                            <option value="1">PENDIENTE DE VISITA</option>
-                            <option value="2">HIZO PEDIDO</option>
-                            <option value="3">NO HIZO PEDIDO : SIN STOCK</option>
-                            <option value="4">NO HIZO PEDIDO : SIN DINERO</option>
-                        </select>
+                            <label id="status">Estado</label>
+                            <select id="idstatus" name="status" >
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
+                    <div class="row">
 
-                    <div class="col-md-4">
-                        <label id="tipo">Tipo</label>
-                        <select name="tipo">
-                            <option value="0">Todos</option>
-                            <option value="1">ESPECIAL 1</option>
-                            <option value="2">CLIENTE VIP</option>
-                            <option value="3">MAYORISTA</option>
-                            <option value="4">MINORISTA</option>
-                            <option value="5">VETERINARIO</option>
-                        </select>
+                        <div class="col-md-2">
+                            <label id="tipo">Tipo</label>
+                            <select id="idtipoprecio"  name="tipo" >
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <label id="morosidad">Morosidad</label>
-                        <select name="morosidad">
-                            <option value="0">Todos</option>
-                            <option value="1">DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO</option>
-                            <option value="2">DEUDA NORMAL</option>
-                            <option value="2">SIN DEUDA</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label id="morosidad">Morosidad</label>
+                            <select id="idmorosidad" name="morosidad" class="selectpicker">
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </div>
+                </fieldset>
+            </div>
 
-    </section>
+            <div id="legend">
+                leyenda
+                <span id="total"></span>
+            </div>
+
+             <section class="paginacion">
+                 <ul>
+                     <li><a href="#" class="prev"> < </a></li><span id="position">0</span>
+                     <li><a href="#" class="next">></a> </li>
+                 </ul>
+             </section>
+
+        </section>
+    </div>
+
 
 </section>
 <!--end material-->
@@ -102,9 +85,18 @@
 </style>
 <script>
     $(function () {
-
         'use strict';
-
+        var forEach=function(t,o,r){if("[object Object]"===Object.prototype.toString.call(t))for(var c in t)Object.prototype.hasOwnProperty.call(t,c)&&o.call(r,t[c],c,t);else for(var e=0,l=t.length;l>e;e++)o.call(r,t[e],e,t)};
+        var hamburgers = document.querySelectorAll(".hamburger");
+        if (hamburgers.length > 0) {
+            forEach(hamburgers, function(hamburger) {
+                hamburger.addEventListener("click", function() {
+                    this.classList.toggle("is-active");
+                    document.getElementById('container-gral').classList.toggle('menu--on');
+                }, false);
+            });
+        }
+/*
         document.querySelector('.material-design-hamburger__icon').addEventListener(
                 'click',
                 function() {
@@ -124,6 +116,7 @@
                     }
 
                 });
+        /**/
         /*------------------------------------------------------------------------------------------------------*/
         var options={url:'test' };
         var data ={};

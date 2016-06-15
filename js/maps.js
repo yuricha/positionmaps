@@ -136,6 +136,7 @@ var mapPosition =function(options,data){
     this.url=options.url;
     this.data = data;
     this.params = {header:null,body:null};
+    this.markers =[];
     this.events();
 }
 mapPosition.prototype.queryToken=function(){
@@ -207,12 +208,13 @@ mapPosition.prototype.drawPoints = function(){
 
         var pinColor = this.estadopreventa[arrayObjectPosition].color;
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
-        this.addMarker((i + 1).toString(), path_coords, map,pinColor.substring(1));
+        var type = {status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo}
+        this.addMarker(String(account[i].estadopreventa.codigo), path_coords, map,pinColor.substring(1),type,i);
 
         if(arrayColor.indexOf(arrayObjectPosition)==-1){
             arrayColor.push(arrayObjectPosition);
             var div = document.createElement('div');
-            div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>';
+            div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> '+account[i].estadopreventa.codigo+'&nbsp;</div>';
             legend.appendChild(div);
          /*   eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
                 e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
@@ -242,7 +244,7 @@ mapPosition.prototype.drawPoints = function(){
     this.status();
 }
 
-mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
+mapPosition.prototype.addMarker= function (label,location,map,pinColor,type,i) {
     var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
         new google.maps.Size(21, 34),
         new google.maps.Point(0,0),
@@ -250,10 +252,14 @@ mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
 
     var marker = new google.maps.Marker({
         position: location,
-        //label: label,// numeration
+        label: label,// numeration
         map: map,
-        icon: pinImage
+        icon: pinImage,
         //shadow: pinShadow
+        type:type
+        //type:type.status
+        //type2:type.precio,
+        //type3:type.morosidad
     });
 
     var contentString = '<div id="content">'+
@@ -270,6 +276,7 @@ mapPosition.prototype.addMarker= function (label,location,map,pinColor) {
     marker.addListener('click', function() {
         infowindow.open(map, marker);
     });
+    this.markers[i]=marker;
 }
 
 mapPosition.prototype.selectMarker= function (obj , map) {
@@ -280,7 +287,19 @@ mapPosition.prototype.selectMarker= function (obj , map) {
 
 mapPosition.prototype.resize= function (map) {
     map.setCenter(this.map_center);
+    //show markers
+ /*   for (var i = 0; i < this.markers.length; i++) {
+        var marker = this.markers[i];
+        if (!marker.getVisible()) {
+            marker.setVisible(true);
+        } else {
+            marker.setVisible(false);
+        }
+    }
+    /**/
     map.fitBounds(path_bounds);
+    this.cleanFilter();
+
 }
 
 
@@ -308,7 +327,11 @@ mapPosition.prototype.status= function () {
         }
     ]
     this.estadopreventa = estadopreventa;
-
+    $('#idstatus').html('').append($('<option>', {
+        value: 0,
+        text : 'Todos'
+    }));
+    insetHtmlSelect('idstatus',estadopreventa);
     //var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing status...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
     //pleaseWaitDiv.modal();
 }
@@ -336,6 +359,17 @@ mapPosition.prototype.price= function () {
         }
     ]
     this.tipoprecio= tipoprecio;
+    $('#idtipoprecio').html('').append($('<option>', {
+        value: 0,
+        text : 'Todos'
+    }));
+    for(var i in tipoprecio){
+        $('#idtipoprecio').append($('<option>', {
+            value: tipoprecio[i].codigo,
+            text : tipoprecio[i].nombre
+        }));
+    }
+    //insetHtmlSelect('idtipoprecio',tipoprecio);
 }
 mapPosition.prototype.morosidad= function () {
 var morosidad = [
@@ -353,6 +387,11 @@ var morosidad = [
         },
     ]
     this.morosidad = morosidad;
+    $('#idmorosidad').html('').append($('<option>', {
+        value: 0,
+        text : 'Todos'
+    }));
+    insetHtmlSelect('idmorosidad',morosidad);
     this.initialize();
 }
 
@@ -360,6 +399,48 @@ mapPosition.prototype.events = function(){
     $('.alert-info').click({OBJ:this},function(e){
         e.data.OBJ.resize(e.data.OBJ.map);
     });
+    $('#idstatus').change({OBJ:this},function(e) {
+        e.data.OBJ.filter(this,'status');
+    });
+    $('#idtipoprecio').change({OBJ:this},function(e) {
+        e.data.OBJ.filter(this,'precio');
+    });
+    $('#idmorosidad').change({OBJ:this},function(e) {
+        e.data.OBJ.filter(this,'morosidad');
+    });
+
+    $('.prev').click({OBJ:this},function(e){
+        e.data.OBJ.pagination();
+    });
+    $('.next').click({OBJ:this},function(e){
+        e.data.OBJ.pagination();
+    });
+}
+mapPosition.prototype.filter = function ($this,selectFilter) {
+    var f1,f2,f3;
+    var status = $('#idstatus');
+    var precio = $('#idtipoprecio');
+    var morosidad = $('#idmorosidad');
+    switch(selectFilter) {
+        case 'status':
+            f1=$this.value;
+            f2=precio.val();
+            f3=morosidad.val();
+            break;
+        case 'precio':
+            f1=status.val();
+            f2=$this.value;
+            f3=morosidad.val();
+            break;
+        case 'morosidad':
+            f1=status.val();
+            f2=precio.val();
+            f3=$this.value;
+            break;
+    }
+    if(parseInt(f1)===0&&parseInt(f2)===0&&parseInt(f3)===0) this.cleanFilter();
+    else this.toggleGroup(parseInt(f1),parseInt(f2),parseInt(f3));
+
 }
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for(var i = 0, len = myArray.length; i < len; i++) {
@@ -369,6 +450,58 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
 }
 
 function insetHtmlSelect(container,arrayList){
+    for(var i in arrayList){
+        $('#'+container).append($('<option>', {
+            value: arrayList[i].codigo,
+            text : arrayList[i].descripcion
+        }));
+    }
+}
+mapPosition.prototype.toggleGroup = function (f1,f2,f3){
+    for (var i = 0; i < this.markers.length; i++) {
+        var marker = this.markers[i];
+        marker.setVisible(false);
+        var type = this.markers[i].type;
+        if(f1!==0){
+            if(f2!==0){
+                if(f3!==0){
+                    if(f1===type.status&&f2===type.precio&&f3===type.morosidad) marker.setVisible(true);
+                }else{
+                    if(f1===type.status&&f2===type.precio) marker.setVisible(true);
+                }
+            }else{
+                if(f3!==0){
+                    if(f1===type.status&&f3===type.morosidad) marker.setVisible(true);
+                }else{
+                    if(f1===type.status) marker.setVisible(true);
+                }
 
+            }
+        } else{
+            if(f2!==0){
+                if(f3!==0){
+                    if(f2===type.precio&&f3===type.morosidad) marker.setVisible(true);
+                }else{
+                    if(f2===type.precio) marker.setVisible(true);
+                }
+            }else{
+                if(f3!==0){
+                    if(f3===type.morosidad) marker.setVisible(true);
+                }
+            }
+        }
+
+    }
+}
+mapPosition.prototype.cleanFilter = function () {
+    for (var i = 0; i < this.markers.length; i++) {
+        var marker = this.markers[i];
+        if (!marker.getVisible()) {
+            marker.setVisible(true);
+        }
+    }
+}
+mapPosition.prototype.pagination = function () {
+    
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
