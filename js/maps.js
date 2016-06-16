@@ -4,8 +4,6 @@
     /*
     ,apagar ventana flotante en cambio de direccion,, sesion
      */
-//var pinColor = "FE7569";
-
 var account= [
     {
         codigo : 14,
@@ -116,21 +114,7 @@ var account= [
         ]
     }
 ]
-/*
-var path_coords = [{
-    lat: -16.417672,
-    lng: -71.517980
-}, {
-    lat: -16.411908,
-    lng: -71.521075
-}, {
-    lat: -16.407502,
-    lng: -71.524402
-}, {
-    lat: -16.405176,
-    lng: -71.521638
-}];
-/**/
+
 var path_bounds;
 var mapPosition =function(options,data){
     this.url=options.url;
@@ -175,7 +159,6 @@ mapPosition.prototype.drawLegend=function(){
         div.innerHTML = '<img src="' + icon + '"> ' + name;
         legend.appendChild(div);
     }
-
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 }
 
@@ -199,12 +182,12 @@ mapPosition.prototype.initialize = function () {
 }
 
 mapPosition.prototype.drawPoints = function(){
-    //var myArray = ["4387FD","03D4E5","E503C2","E51F03","E59203","C6E503"];
     var eventClick = [];
     var arrayColor = [];
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
     this.totalCoord = account.length;
+    $('.total').html('TOTAL: '+this.totalCoord);
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
         var arrayObjectPosition = arrayObjectIndexOf(this.estadopreventa, account[i].estadopreventa.codigo, "codigo");
@@ -213,13 +196,12 @@ mapPosition.prototype.drawPoints = function(){
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
         var type = {status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo}
         this.addMarker(String(account[i].estadopreventa.codigo), path_coords, map,pinColor.substring(1),type,i);
-
+        this.pathCoord[i]=path_coords;
         if(arrayColor.indexOf(arrayObjectPosition)==-1){
             arrayColor.push(arrayObjectPosition);
             var div = document.createElement('div');
             div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> '+account[i].estadopreventa.codigo+'&nbsp;</div>';
             legend.appendChild(div);
-            this.pathCoord[i]=path_coords;
             /*eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
                 e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
             });
@@ -234,15 +216,10 @@ mapPosition.prototype.drawPoints = function(){
 
     this.resize(map);
     google.maps.event.addDomListener(window, 'resize',this.resize);
-    //map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-
-    //var container = document.getElementById('container-filter');
-    //map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(container);
 
     /*----------------------material--------------------*/
     var material = document.getElementById('wrapper');
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(material);
-
 
     this.status();
 }
@@ -260,9 +237,6 @@ mapPosition.prototype.addMarker= function (label,location,map,pinColor,type,i) {
         icon: pinImage,
         //shadow: pinShadow
         type:type
-        //type:type.status
-        //type2:type.precio,
-        //type3:type.morosidad
     });
 
     var contentString = '<div id="content">'+
@@ -291,18 +265,9 @@ mapPosition.prototype.selectMarker= function (obj , map) {
 mapPosition.prototype.resize= function (map) {
     map.setCenter(this.map_center);
     //show markers
- /*   for (var i = 0; i < this.markers.length; i++) {
-        var marker = this.markers[i];
-        if (!marker.getVisible()) {
-            marker.setVisible(true);
-        } else {
-            marker.setVisible(false);
-        }
-    }
-    /**/
     map.fitBounds(path_bounds);
     this.cleanFilter();
-
+    this.bindCustom();
 }
 
 
@@ -411,13 +376,7 @@ mapPosition.prototype.events = function(){
     $('#idmorosidad').change({OBJ:this},function(e) {
         e.data.OBJ.filter(this,'morosidad');
     });
-
-    $('.prev').click({OBJ:this},function(e){
-        e.data.OBJ.pagination(0);
-    });
-    $('.next').click({OBJ:this},function(e){
-        e.data.OBJ.pagination(1);
-    });
+    this.bindCustom();
 }
 mapPosition.prototype.filter = function ($this,selectFilter) {
     var f1,f2,f3;
@@ -441,8 +400,13 @@ mapPosition.prototype.filter = function ($this,selectFilter) {
             f3=$this.value;
             break;
     }
-    if(parseInt(f1)===0&&parseInt(f2)===0&&parseInt(f3)===0) this.cleanFilter();
-    else this.toggleGroup(parseInt(f1),parseInt(f2),parseInt(f3));
+    if(parseInt(f1)===0&&parseInt(f2)===0&&parseInt(f3)===0){
+        this.cleanFilter();
+        this.bindCustom();
+    } else{
+        this.unbindCustom();
+        this.toggleGroup(parseInt(f1),parseInt(f2),parseInt(f3));
+    }
 
 }
 function arrayObjectIndexOf(myArray, searchTerm, property) {
@@ -503,18 +467,50 @@ mapPosition.prototype.cleanFilter = function () {
             marker.setVisible(true);
         }
     }
+   $('#idstatus').val(0);
+    $('#idtipoprecio').val(0);
+    $('#idmorosidad').val(0);
+
+    $('#position').html(0);
+    this.paginationPosition =0;
 }
 mapPosition.prototype.pagination = function (action) {
     var pos=0;
     var total = this.totalCoord;
-    if(1){
+    if(this.paginationPosition<=total){
         if(action==1)pos = this.paginationPosition+ 1;
-        else  pos = this.paginationPosition -1;
+        else{
+            if(this.paginationPosition==0){
+                pos = this.totalCoord;
+            }else{
+                if(this.paginationPosition==1) pos = total;
+                else pos = this.paginationPosition -1;
+            }
+        }
     }
 
-    if(total>pos)this.paginationPosition=pos;
-    else pos =1;
+    if(total>=pos)this.paginationPosition=pos;
+    else{
+        pos =1;
+        this.paginationPosition=pos;
+    }
     this.selectMarker(this.pathCoord[pos-1],this.map);
     $('#position').html(pos);
 }
+
+mapPosition.prototype.unbindCustom = function () {
+    $('.prev').unbind();
+    $('.next').unbind();
+}
+mapPosition.prototype.bindCustom = function (){
+    $('.prev').unbind();
+    $('.prev').click({OBJ:this},function(e){
+        e.data.OBJ.pagination(0);
+    });
+    $('.next').unbind();
+    $('.next').click({OBJ:this},function(e){
+        e.data.OBJ.pagination(1);
+    });
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
