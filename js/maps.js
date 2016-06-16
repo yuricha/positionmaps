@@ -187,6 +187,7 @@ mapPosition.prototype.drawPoints = function(){
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
     this.totalCoord = account.length;
+    this.account = account;
     $('.total').html('TOTAL: '+this.totalCoord);
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
@@ -194,7 +195,7 @@ mapPosition.prototype.drawPoints = function(){
 
         var pinColor = this.estadopreventa[arrayObjectPosition].color;
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
-        var type = {status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo}
+        var type = {pos:i,status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo,$this:this}
         this.addMarker(String(account[i].estadopreventa.codigo), path_coords, map,pinColor.substring(1),type,i);
         this.pathCoord[i]=path_coords;
         if(arrayColor.indexOf(arrayObjectPosition)==-1){
@@ -250,10 +251,25 @@ mapPosition.prototype.addMarker= function (label,location,map,pinColor,type,i) {
     var infowindow = new google.maps.InfoWindow({
         content: contentString
     });
-    marker.addListener('click', function() {
-        infowindow.open(map, marker);
+    marker.addListener('click', function(e) {
+        //infowindow.open(map, marker);
+        //e.data.OBJ.loadInfoWindow(e.data.pos);
+        marker.type.$this.loadInfoWindow(marker);
     });
     this.markers[i]=marker;
+}
+
+mapPosition.prototype.loadInfoWindow = function (marker) {
+    var cliente = this.account[marker.type.pos];
+    $('.cliente').html('Cliente: '+cliente.nombres+','+cliente.apellidos);
+    $('.direccion').html(cliente.direccion);
+    $('.deuda').html(cliente.deudatotal);
+    $('.titular').html(cliente.titular.nombres+','+cliente.titular.apellidos);
+    $('.credito').html(cliente.lineacredito);
+    $('.precio').html(cliente.tipoprecio.codigo);
+    $('.estado').html(cliente.estadopreventa.codigo);
+    $('.morosidad').html(cliente.morosidad.codigo);
+    $('#modalmpas').modal('show');
 }
 
 mapPosition.prototype.selectMarker= function (obj , map) {
