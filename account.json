@@ -15,7 +15,7 @@
 					codigo : 5,
 					nombres : "OSCAR",
 					apellidos : "GUZMAN",		
-				}
+				},
 				tipoprecio : {
 					codigo : 1
 				},
@@ -42,7 +42,7 @@
 					codigo : 5,
 					nombres : "OSCAR",
 					apellidos : "GUZMAN",		
-				}
+				},
 				tipoprecio : {
 					codigo : 2
 				},
@@ -69,7 +69,7 @@
 					codigo : 5,
 					nombres : "OSCAR",
 					apellidos : "GUZMAN",		
-				}
+				},
 				tipoprecio : {
 					codigo : 1
 				},
@@ -95,8 +95,8 @@
 				titular : {
 					codigo : 5,
 					nombres : "OSCAR",
-					apellidos : "GUZMAN",		
-				}
+					apellidos : "GUZMAN"
+				},
 				tipoprecio : {
 					codigo : 1
 				},
@@ -122,8 +122,8 @@
 				titular : {
 					codigo : 5,
 					nombres : "OSCAR",
-					apellidos : "GUZMAN",		
-				}
+					apellidos : "GUZMAN"
+				},
 				tipoprecio : {
 					codigo : 1
 				},

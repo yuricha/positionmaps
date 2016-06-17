@@ -4,7 +4,7 @@
     /*
 
      */
-var account= [
+var accountold= [
     {
         codigo : 14,
         orden : 1,
@@ -133,11 +133,8 @@ mapPosition.prototype.queryToken=function(){
     }
     var params = this.params;
     console.log(params);
-    $.getJSON('../account.json').done(function(response) {
-        console.log("Success");
-    }).fail(function() {
-        console.log("Error");
-    });
+    var mydata = account;
+    console.log(mydata);
    /* $.post('account.json', params, function(_result){
         console.log(_result);
         if(_result.success){
@@ -145,9 +142,9 @@ mapPosition.prototype.queryToken=function(){
     });
     /**/
 
-    //this.status();
-    //this.price();
-    //this.morosidad();
+   // this.status();
+   // this.price();
+   // this.morosidad();
 
 }
 mapPosition.prototype.convertDate = function(inputFormat){
