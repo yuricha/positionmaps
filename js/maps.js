@@ -2,7 +2,7 @@
  * Created by Yuri on 26/05/2016.
  */
     /*
-    ,apagar ventana flotante en cambio de direccion,, sesion
+
      */
 var account= [
     {
@@ -133,15 +133,21 @@ mapPosition.prototype.queryToken=function(){
     }
     var params = this.params;
     console.log(params);
-   /* $.post(this.url+'', params, function(_result){
+    $.getJSON('../account.json').done(function(response) {
+        console.log("Success");
+    }).fail(function() {
+        console.log("Error");
+    });
+   /* $.post('account.json', params, function(_result){
+        console.log(_result);
         if(_result.success){
         }
     });
     /**/
 
-    this.status();
-    this.price();
-    this.morosidad();
+    //this.status();
+    //this.price();
+    //this.morosidad();
 
 }
 mapPosition.prototype.convertDate = function(inputFormat){
@@ -167,7 +173,8 @@ mapPosition.prototype.initialize = function () {
     //var options= {'url':'testurl'};
     //new mapPosition(options,data);
 
-    var map_center = new google.maps.LatLng(-16.407009, -71.520284);
+    //var map_center = new google.maps.LatLng(-16.407009, -71.520284); //aqp
+    var map_center = new google.maps.LatLng(-12.069900, -77.122142); //callao
     this.map_center = map_center;
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
@@ -182,7 +189,6 @@ mapPosition.prototype.initialize = function () {
 }
 
 mapPosition.prototype.drawPoints = function(){
-    var eventClick = [];
     var arrayColor = [];
     var legend = document.getElementById('legend');
     path_bounds = new google.maps.LatLngBounds();
@@ -195,7 +201,7 @@ mapPosition.prototype.drawPoints = function(){
 
         var pinColor = this.estadopreventa[arrayObjectPosition].color;
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
-        var type = {pos:i,status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo,$this:this}
+        var type = {pos:i,status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo,$this:this};
         this.addMarker(String(account[i].estadopreventa.codigo), path_coords, map,pinColor.substring(1),type,i);
         this.pathCoord[i]=path_coords;
         if(arrayColor.indexOf(arrayObjectPosition)==-1){
@@ -203,10 +209,6 @@ mapPosition.prototype.drawPoints = function(){
             var div = document.createElement('div');
             div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> '+account[i].estadopreventa.codigo+'&nbsp;</div>';
             legend.appendChild(div);
-            /*eventClick[i]= $('#'+i).click({OBJ:this,latlong:path_coords,map:map},function(e) {
-                e.data.OBJ.selectMarker(e.data.latlong,e.data.map);
-            });
-            /**/
         }
         path_bounds.extend(
             new google.maps.LatLng(
@@ -263,13 +265,18 @@ mapPosition.prototype.loadInfoWindow = function (marker) {
     var cliente = this.account[marker.type.pos];
     $('.cliente').html('Cliente: '+cliente.nombres+','+cliente.apellidos);
     $('.direccion').html(cliente.direccion);
+    $('.orden').html(cliente.orden);
     $('.deuda').html(cliente.deudatotal);
     $('.titular').html(cliente.titular.nombres+','+cliente.titular.apellidos);
     $('.credito').html(cliente.lineacredito);
-    $('.precio').html(cliente.tipoprecio.codigo);
-    $('.estado').html(cliente.estadopreventa.codigo);
-    $('.morosidad').html(cliente.morosidad.codigo);
+
+
+    $('.precio').html(this.tipoprecio[arrayObjectIndexOf(this.tipoprecio, cliente.tipoprecio.codigo, "codigo")].nombre);
+    $('.estado').html(this.estadopreventa[arrayObjectIndexOf(this.estadopreventa, cliente.estadopreventa.codigo, "codigo")].descripcion);
+
+    $('.morosidad').html(this.morosidad[arrayObjectIndexOf(this.morosidad, cliente.morosidad.codigo, "codigo")].descripcion);
     $('#modalmpas').modal('show');
+
 }
 
 mapPosition.prototype.selectMarker= function (obj , map) {
@@ -316,8 +323,6 @@ mapPosition.prototype.status= function () {
         text : 'Todos'
     }));
     insetHtmlSelect('idstatus',estadopreventa);
-    //var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing status...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
-    //pleaseWaitDiv.modal();
 }
 mapPosition.prototype.price= function () {
  var tipoprecio = [
@@ -483,15 +488,14 @@ mapPosition.prototype.cleanFilter = function () {
             marker.setVisible(true);
         }
     }
-   $('#idstatus').val(0);
+    $('#idstatus').val(0);
     $('#idtipoprecio').val(0);
     $('#idmorosidad').val(0);
-
     $('#position').html(0);
     this.paginationPosition =0;
 }
 mapPosition.prototype.pagination = function (action) {
-    var pos=0;
+    var pos = 0;
     var total = this.totalCoord;
     if(this.paginationPosition<=total){
         if(action==1)pos = this.paginationPosition+ 1;
@@ -527,6 +531,14 @@ mapPosition.prototype.bindCustom = function (){
     $('.next').click({OBJ:this},function(e){
         e.data.OBJ.pagination(1);
     });
+}
+mapPosition.prototype.updateStatus = function (){
+
+     $.post(this.urlStatus+'', params, function(_result){
+     if(_result.success){
+     }
+     });
+     /**/
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
