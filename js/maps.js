@@ -10,6 +10,7 @@ var mapPosition =function(options,data){
     this.markers =[];
     this.pathCoord=[];
     this.paginationPosition =0;
+    this.update=true;
     this.events();
 }
 mapPosition.prototype.queryToken=function(){
@@ -268,7 +269,9 @@ var morosidad = [
         text : 'Todos'
     }));
     insetHtmlSelect('idmorosidad',morosidad);
-    this.initialize();
+    if(this.update){
+        this.initialize();
+    }
 }
 
 mapPosition.prototype.events = function(){
@@ -345,6 +348,7 @@ mapPosition.prototype.toggleGroup = function (f1,f2,f3){
         var marker = this.markers[i];
         marker.setVisible(false);
         var type = this.markers[i].type;
+
         if(f1!==0){
             if(f2!==0){
                 if(f3!==0){
@@ -373,7 +377,7 @@ mapPosition.prototype.toggleGroup = function (f1,f2,f3){
                 }
             }
         }
-
+        
     }
 }
 mapPosition.prototype.cleanFilter = function () {
@@ -442,10 +446,11 @@ mapPosition.prototype.updateStatus = function (){
     }
     this.markers=[];
 
-
     this.status();
     this.price();
+    this.update=false;
     this.morosidadLoad();
+
     this.events();
     this.drawPoints(this.map);
 }
