@@ -1,119 +1,6 @@
 /**
  * Created by Yuri on 26/05/2016.
  */
-    /*
-
-     */
-var accountold= [
-    {
-        codigo : 14,
-        orden : 1,
-        nombres : "CARMEN DOROTEA",
-        apellidos : "AGUEDO URDAY",
-        direccion : "MCDO.SAN CAMILO PTO.5 CERCADO",
-        latitud : "-16.402472781080736",
-        longitud : "-71.5349422768486",
-        deudatotal : 0,
-        lineacredito : 1000,
-        titular : {
-            codigo : 5,
-            nombres : "OSCAR",
-            apellidos : "GUZMAN"
-        },
-        tipoprecio : {
-            codigo : 1
-        },
-        estadopreventa : {
-            codigo : 1
-        },
-        morosidad : {
-            codigo : 3
-        },
-        visitaclientedetalle : [
-        ]
-    },
-    {
-        codigo : 28,
-        orden : 2,
-        nombres : "GERARDO",
-        apellidos : "AMBROSIO SUCASACA",
-        direccion : "MCDO.ZAMACOLA PTO.21 C.COLORADO",
-        latitud : "-16.35162272072182",
-        longitud : "-71.56288016594772",
-        deudatotal : 3500,
-        lineacredito : 4000,
-        titular : {
-            codigo : 5,
-            nombres : "OSCAR",
-            apellidos : "GUZMAN"
-        },
-        tipoprecio : {
-            codigo : 2
-        },
-        estadopreventa : {
-            codigo : 2
-        },
-        morosidad : {
-            codigo : 1
-        },
-        visitaclientedetalle : [
-        ]
-    },
-    {
-        codigo : 32,
-        orden : 3,
-        nombres : "REGINA",
-        apellidos : "HANCO QUISPE",
-        direccion : "MCDO.STA ROSA PTO.102 CONO SUR TACNA",
-        latitud : "-16.398006919391225",
-        longitud : "-71.53760433197021",
-        deudatotal : 500,
-        lineacredito : 1000,
-        titular : {
-            codigo : 5,
-            nombres : "OSCAR",
-            apellidos : "GUZMAN"
-        },
-        tipoprecio : {
-            codigo : 1
-        },
-        estadopreventa : {
-            codigo : 4
-        },
-        morosidad : {
-            codigo : 2
-        },
-        visitaclientedetalle : [
-        ]
-    },
-    {
-        codigo : 34,
-        orden : 4,
-        nombres : "BERTHA REYNA",
-        apellidos : "ANGELO GUTIERREZ",
-        direccion : "AV AVIACION 203-A ZAMACOLA",
-        latitud : "-16.354916051799975",
-        longitud : "-71.56721331193694",
-        deudatotal : 0,
-        lineacredito : 0,
-        titular : {
-            codigo : 5,
-            nombres : "OSCAR",
-            apellidos : "GUZMAN"
-        },
-        tipoprecio : {
-            codigo : 1
-        },
-        estadopreventa : {
-            codigo : 1
-        },
-        morosidad : {
-            codigo : 3
-        },
-        visitaclientedetalle : [
-        ]
-    }
-]
 
 var path_bounds;
 var mapPosition =function(options,data){
@@ -132,9 +19,7 @@ mapPosition.prototype.queryToken=function(){
         codigo:this.data.codigo
     }
     var params = this.params;
-    console.log(params);
-    var mydata = account;
-    console.log(mydata);
+    var $this = this;
    /* $.post('account.json', params, function(_result){
         console.log(_result);
         if(_result.success){
@@ -142,9 +27,13 @@ mapPosition.prototype.queryToken=function(){
     });
     /**/
 
-   // this.status();
-   // this.price();
-   // this.morosidad();
+    var data = account.body;
+    if(data.visitacliente.length>0){
+        this.account= data.visitacliente;
+    }
+    this.status();
+    this.price();
+    this.morosidadLoad();
 
 }
 mapPosition.prototype.convertDate = function(inputFormat){
@@ -170,8 +59,7 @@ mapPosition.prototype.initialize = function () {
     //var options= {'url':'testurl'};
     //new mapPosition(options,data);
 
-    //var map_center = new google.maps.LatLng(-16.407009, -71.520284); //aqp
-    var map_center = new google.maps.LatLng(-12.069900, -77.122142); //callao
+    var map_center = new google.maps.LatLng(-16.407009, -71.520284); //aqp
     this.map_center = map_center;
     var mapCanvas = document.getElementById('map');
     var mapOptions = {
@@ -185,12 +73,14 @@ mapPosition.prototype.initialize = function () {
     this.drawPoints(map);
 }
 
-mapPosition.prototype.drawPoints = function(){
+mapPosition.prototype.drawPoints = function(map){
     var arrayColor = [];
-    var legend = document.getElementById('legend');
+    //var legend = document.getElementById('legend');
+    var legend = $('#legend-content');
+    legend.html('');
     path_bounds = new google.maps.LatLngBounds();
-    this.totalCoord = account.length;
-    this.account = account;
+    this.totalCoord = this.account.length;
+    var account = this.account;
     $('.total').html('TOTAL: '+this.totalCoord);
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
@@ -199,13 +89,14 @@ mapPosition.prototype.drawPoints = function(){
         var pinColor = this.estadopreventa[arrayObjectPosition].color;
         var path_coords ={lat:parseFloat(account[i].latitud) ,lng: parseFloat(account[i].longitud)};
         var type = {pos:i,status:account[i].estadopreventa.codigo,precio:account[i].tipoprecio.codigo,morosidad:account[i].morosidad.codigo,$this:this};
+
         this.addMarker(String(account[i].estadopreventa.codigo), path_coords, map,pinColor.substring(1),type,i);
         this.pathCoord[i]=path_coords;
         if(arrayColor.indexOf(arrayObjectPosition)==-1){
             arrayColor.push(arrayObjectPosition);
             var div = document.createElement('div');
             div.innerHTML = '<div  id='+i+' style="width :100px;background-color:'+pinColor+'"> '+account[i].estadopreventa.codigo+'&nbsp;</div>';
-            legend.appendChild(div);
+            legend.append(div);
         }
         path_bounds.extend(
             new google.maps.LatLng(
@@ -252,7 +143,6 @@ mapPosition.prototype.addMarker= function (label,location,map,pinColor,type,i) {
     });
     marker.addListener('click', function(e) {
         //infowindow.open(map, marker);
-        //e.data.OBJ.loadInfoWindow(e.data.pos);
         marker.type.$this.loadInfoWindow(marker);
     });
     this.markers[i]=marker;
@@ -357,7 +247,7 @@ mapPosition.prototype.price= function () {
     }
     //insetHtmlSelect('idtipoprecio',tipoprecio);
 }
-mapPosition.prototype.morosidad= function () {
+mapPosition.prototype.morosidadLoad= function () {
 var morosidad = [
         {
             codigo : 1,
@@ -382,15 +272,23 @@ var morosidad = [
 }
 
 mapPosition.prototype.events = function(){
+    $('.alert-info').unbind();
     $('.alert-info').click({OBJ:this},function(e){
         e.data.OBJ.resize(e.data.OBJ.map);
     });
+    $('.alert-link').unbind();
+    $('.alert-link').click({OBJ:this},function(e){
+        e.data.OBJ.updateStatus();
+    });
+    $('#idstatus').unbind();
     $('#idstatus').change({OBJ:this},function(e) {
         e.data.OBJ.filter(this,'status');
     });
+    $('#idtipoprecio').unbind();
     $('#idtipoprecio').change({OBJ:this},function(e) {
         e.data.OBJ.filter(this,'precio');
     });
+    $('#idmorosidad').unbind();
     $('#idmorosidad').change({OBJ:this},function(e) {
         e.data.OBJ.filter(this,'morosidad');
     });
@@ -530,12 +428,32 @@ mapPosition.prototype.bindCustom = function (){
     });
 }
 mapPosition.prototype.updateStatus = function (){
-
+/*
      $.post(this.urlStatus+'', params, function(_result){
      if(_result.success){
      }
      });
      /**/
+    this.clearMarkers();
+
+    var data = account2.body;
+    if(data.visitacliente.length>0){
+        this.account= data.visitacliente;
+    }
+    this.markers=[];
+
+
+    this.status();
+    this.price();
+    this.morosidadLoad();
+    this.events();
+    this.drawPoints(this.map);
+}
+
+mapPosition.prototype.clearMarkers = function () {
+    for (var i = 0; i < this.markers.length; i++) {
+        this.markers[i].setMap(null);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
