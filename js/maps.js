@@ -26,6 +26,7 @@ mapPosition.prototype.queryToken=function(){
     var params = this.params;
     var $this = this;
     var ruta = this.hostname+this.service+this.url;
+    /*
         $.ajax({
                 data:  JSON.stringify(params),
                 url:   ruta,
@@ -35,15 +36,17 @@ mapPosition.prototype.queryToken=function(){
                 beforeSend: function () {
                 },
                 success:  function (response) {
-                        //console.log(response);
 				    var data = response.body;
 					if(data.visitacliente.length>0){
 						$this.account= data.visitacliente;
 					}
 					$this.status();
-					
                 }
         });
+    /**/
+
+    $this.account= account.body.visitacliente;
+    $this.status();
 }
 mapPosition.prototype.convertDate = function(inputFormat){
     function pad(s) { return (s < 10) ? '0' + s : s; }
@@ -88,6 +91,7 @@ mapPosition.prototype.drawPoints = function(map){
     this.totalCoord = this.account.length;
     var account = this.account;
     $('.total').html('TOTAL: '+this.totalCoord);
+    $('.actual').html('Actual: '+this.totalCoord);
     for (var i = 0; i < account.length; i++) {
         //var pinColor = myArray[Math.floor(Math.random() * myArray.length)];
         var arrayObjectPosition = arrayObjectIndexOf(this.estadopreventa, account[i].estadopreventa.codigo, "codigo");
@@ -191,6 +195,7 @@ mapPosition.prototype.resize= function (map) {
 mapPosition.prototype.status= function () {
   
 	var $this =this;
+    /*
 	var ruta = this.hostname+this.service+this.options.urlestadopreventa;
 	        $.ajax({
                 //data:  JSON.stringify(params),
@@ -212,12 +217,39 @@ mapPosition.prototype.status= function () {
 						$this.price();
 					
 					}
-					/**/
+
                 }
         });
+    /**/
+
+    var estadopreventa = [
+        {
+            codigo : 1,
+            descripcion : "PENDIENTE DE VISITA",
+            color : "#FAC905"
+        },
+        {
+            codigo : 2,
+            descripcion : "HIZO PEDIDO",
+            color : "#FA0536"
+        },
+        {
+            codigo : 3,
+            descripcion : "NO HIZO PEDIDO : SIN STOCK",
+            color : "#418716"
+        },
+        {
+            codigo : 4,
+            descripcion : "NO HIZO PEDIDO : SIN DINERO",
+            color : "#2579CD"
+        }
+    ]
+    this.estadopreventa=estadopreventa;
+    this.price();
 }
 mapPosition.prototype.price= function () {
 var $this =this;
+    /*
 		var ruta = this.hostname+this.service+this.options.urltipoprecio;
 	        $.ajax({
                 //data:  JSON.stringify(params),
@@ -248,11 +280,13 @@ var $this =this;
 					}
                 }
         });
-
+    /**/
+    this.morosidadLoad();
 }
 mapPosition.prototype.morosidadLoad= function () {
 
 	var $this =this;
+    /*
 			var ruta = this.hostname+this.service+this.options.urlmorosidad;
 	        $.ajax({
                 //data:  JSON.stringify(params),
@@ -276,9 +310,11 @@ mapPosition.prototype.morosidadLoad= function () {
 								$this.initialize();
 							}
 					}
-					/**/
+
                 }
         });
+    /**/
+    this.initialize();
 }
 
 mapPosition.prototype.events = function(){
