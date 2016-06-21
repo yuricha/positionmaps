@@ -4,7 +4,10 @@
 
 var path_bounds;
 var mapPosition =function(options,data){
+	this.options=options;
     this.url=options.url;
+    this.hostname=options.hostname;
+    this.service=options.service;
     this.data = data;
     this.params = {header:null,body:null};
     this.markers =[];
@@ -15,27 +18,32 @@ var mapPosition =function(options,data){
 }
 mapPosition.prototype.queryToken=function(){
     var date = this.convertDate(new Date());
-    this.params.body = {
-        fecha:date,
-        codigo:this.data.codigo
+    this.params = { body :{
+		fecha:date,
+        'trabajador':{ codigo:this.data.codigo}
+		}        
     }
     var params = this.params;
     var $this = this;
-   /* $.post('account.json', params, function(_result){
-        console.log(_result);
-        if(_result.success){
-        }
-    });
-    /**/
-
-    var data = account.body;
-    if(data.visitacliente.length>0){
-        this.account= data.visitacliente;
-    }
-    this.status();
-    this.price();
-    this.morosidadLoad();
-
+    var ruta = this.hostname+this.service+this.url;
+        $.ajax({
+                data:  JSON.stringify(params),
+                url:   ruta,
+				dataType: 'json',
+				contentType: 'application/json',
+                type:  'post',
+                beforeSend: function () {
+                },
+                success:  function (response) {
+                        //console.log(response);
+				    var data = response.body;
+					if(data.visitacliente.length>0){
+						$this.account= data.visitacliente;
+					}
+					$this.status();
+					
+                }
+        });
 }
 mapPosition.prototype.convertDate = function(inputFormat){
     function pad(s) { return (s < 10) ? '0' + s : s; }
@@ -56,9 +64,6 @@ mapPosition.prototype.drawLegend=function(){
 }
 
 mapPosition.prototype.initialize = function () {
-    //var data = {'codigo':5};
-    //var options= {'url':'testurl'};
-    //new mapPosition(options,data);
 
     var map_center = new google.maps.LatLng(-16.407009, -71.520284); //aqp
     this.map_center = map_center;
@@ -113,7 +118,7 @@ mapPosition.prototype.drawPoints = function(map){
     var material = document.getElementById('wrapper');
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(material);
 
-    this.status();
+    //this.status();
 }
 
 mapPosition.prototype.addMarker= function (label,location,map,pinColor,type,i) {
@@ -155,7 +160,8 @@ mapPosition.prototype.loadInfoWindow = function (marker) {
     $('.direccion').html(cliente.direccion);
     $('.orden').html(cliente.orden);
     $('.deuda').html(cliente.deudatotal);
-    $('.titular').html(cliente.titular.nombres+','+cliente.titular.apellidos);
+	if(cliente.titular!==null) $('.titular').html(cliente.titular.nombres+','+cliente.titular.apellidos);
+    
     $('.credito').html(cliente.lineacredito);
 
 
@@ -183,95 +189,96 @@ mapPosition.prototype.resize= function (map) {
 
 
 mapPosition.prototype.status= function () {
-    var estadopreventa = [
-        {
-            codigo : 1,
-            descripcion : "PENDIENTE DE VISITA",
-            color : "#FAC905"
-        },
-        {
-            codigo : 2,
-            descripcion : "HIZO PEDIDO",
-            color : "#FA0536"
-        },
-        {
-            codigo : 3,
-            descripcion : "NO HIZO PEDIDO : SIN STOCK",
-            color : "#418716"
-        },
-        {
-            codigo : 4,
-            descripcion : "NO HIZO PEDIDO : SIN DINERO",
-            color : "#2579CD"
-        }
-    ]
-    this.estadopreventa = estadopreventa;
-    $('#idstatus').html('').append($('<option>', {
-        value: 0,
-        text : 'Todos'
-    }));
-    insetHtmlSelect('idstatus',estadopreventa);
+  
+	var $this =this;
+	var ruta = this.hostname+this.service+this.options.urlestadopreventa;
+	        $.ajax({
+                //data:  JSON.stringify(params),
+                url:   ruta,
+				dataType: 'json',
+				contentType: 'application/json',
+                type:  'get',
+                beforeSend: function () {
+                       
+                },
+                success:  function (response) {
+						$('#idstatus').html('').append($('<option>', {
+							value: 0,
+							text : 'Todos'
+						}));
+					if(response.body.estadopreventa.length>0){
+						$this.estadopreventa= response.body.estadopreventa;
+						insetHtmlSelect('idstatus',response.body.estadopreventa);
+						$this.price();
+					
+					}
+					/**/
+                }
+        });
 }
 mapPosition.prototype.price= function () {
- var tipoprecio = [
-        {
-            codigo : 1,
-            nombre : "ESPECIAL 1"
-        },
-        {
-            codigo : 2,
-            nombre : "CLIENTE VIP"
-        },
-        {
-            codigo : 3,
-            nombre : "MAYORISTA"
-        },
-        {
-            codigo : 4,
-            nombre : "MINORISTA"
-        },
-        {
-            codigo : 5,
-            nombre : "VETERINARIO"
-        }
-    ]
-    this.tipoprecio= tipoprecio;
-    $('#idtipoprecio').html('').append($('<option>', {
-        value: 0,
-        text : 'Todos'
-    }));
-    for(var i in tipoprecio){
-        $('#idtipoprecio').append($('<option>', {
-            value: tipoprecio[i].codigo,
-            text : tipoprecio[i].nombre
-        }));
-    }
-    //insetHtmlSelect('idtipoprecio',tipoprecio);
+var $this =this;
+		var ruta = this.hostname+this.service+this.options.urltipoprecio;
+	        $.ajax({
+                //data:  JSON.stringify(params),
+                url:   ruta,
+				dataType: 'json',
+				contentType: 'application/json',
+                type:  'get',
+                beforeSend: function () {
+                       
+                },
+                success:  function (response) {
+                    console.log(response);
+					$('#idtipoprecio').html('').append($('<option>', {
+							value: 0,
+							text : 'Todos'
+					}));
+					if(response.body.tipoprecio.length>0){
+						$this.tipoprecio= response.body.tipoprecio;
+						var tipoprecio = response.body.tipoprecio;
+						//insetHtmlSelect('idtipoprecio',response.body.tipoprecio);
+						for(var i in tipoprecio){
+							$('#idtipoprecio').append($('<option>', {
+								value: tipoprecio[i].codigo,
+								text : tipoprecio[i].nombre
+							}));
+						}
+						$this.morosidadLoad();
+					}
+                }
+        });
+
 }
 mapPosition.prototype.morosidadLoad= function () {
-var morosidad = [
-        {
-            codigo : 1,
-            descripcion : "DEUDAS QUE SUPERAN LA FECHA DE VENCIMIENTO"
-        },
-        {
-            codigo : 2,
-            descripcion : "DEUDA NORMAL"
-        },
-        {
-            codigo : 3,
-            descripcion : "SIN DEUDA"
-        },
-    ]
-    this.morosidad = morosidad;
-    $('#idmorosidad').html('').append($('<option>', {
-        value: 0,
-        text : 'Todos'
-    }));
-    insetHtmlSelect('idmorosidad',morosidad);
-    if(this.update){
-        this.initialize();
-    }
+
+	var $this =this;
+			var ruta = this.hostname+this.service+this.options.urlmorosidad;
+	        $.ajax({
+                //data:  JSON.stringify(params),
+                url:   ruta,
+				dataType: 'json',
+				contentType: 'application/json',
+                type:  'get',
+                beforeSend: function () {
+                       
+                },
+                success:  function (response) {
+                        //console.log(response);
+						$('#idmorosidad').html('').append($('<option>', {
+							value: 0,
+							text : 'Todos'
+						}));
+					if(response.body.estadomorosidad.length>0){
+						$this.morosidad= response.body.estadomorosidad;
+						insetHtmlSelect('idmorosidad',response.body.estadomorosidad);
+						    if($this.update){
+								$this.initialize();
+							}
+					}
+					/**/
+                }
+        });
 }
 
 mapPosition.prototype.events = function(){
@@ -344,6 +351,7 @@ function insetHtmlSelect(container,arrayList){
     }
 }
 mapPosition.prototype.toggleGroup = function (f1,f2,f3){
+    var find = 0;
     for (var i = 0; i < this.markers.length; i++) {
         var marker = this.markers[i];
         marker.setVisible(false);
@@ -352,33 +360,55 @@ mapPosition.prototype.toggleGroup = function (f1,f2,f3){
         if(f1!==0){
             if(f2!==0){
                 if(f3!==0){
-                    if(f1===type.status&&f2===type.precio&&f3===type.morosidad) marker.setVisible(true);
+                    if(f1===type.status&&f2===type.precio&&f3===type.morosidad){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }else{
-                    if(f1===type.status&&f2===type.precio) marker.setVisible(true);
+                    if(f1===type.status&&f2===type.precio){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }
             }else{
                 if(f3!==0){
-                    if(f1===type.status&&f3===type.morosidad) marker.setVisible(true);
+                    if(f1===type.status&&f3===type.morosidad){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }else{
-                    if(f1===type.status) marker.setVisible(true);
+                    if(f1===type.status){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }
 
             }
         } else{
             if(f2!==0){
                 if(f3!==0){
-                    if(f2===type.precio&&f3===type.morosidad) marker.setVisible(true);
+                    if(f2===type.precio&&f3===type.morosidad){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }else{
-                    if(f2===type.precio) marker.setVisible(true);
+                    if(f2===type.precio){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }
             }else{
                 if(f3!==0){
-                    if(f3===type.morosidad) marker.setVisible(true);
+                    if(f3===type.morosidad){
+                        marker.setVisible(true);
+                        find++;
+                    }
                 }
             }
         }
         
     }
+    $('#actual').html(find);
 }
 mapPosition.prototype.cleanFilter = function () {
     for (var i = 0; i < this.markers.length; i++) {
@@ -432,12 +462,35 @@ mapPosition.prototype.bindCustom = function (){
     });
 }
 mapPosition.prototype.updateStatus = function (){
+
+    var params = this.params;
+    var $this = this;
+    var ruta = this.hostname+this.service+this.url;
+    $.ajax({
+        data:  JSON.stringify(params),
+        url:   ruta,
+        dataType: 'json',
+        contentType: 'application/json',
+        type:  'post',
+        beforeSend: function () {
+        },
+        success:  function (response) {
+            //console.log(response);
+            var data = response.body;
+            if(data.visitacliente.length>0){
+                $this.account= data.visitacliente;
+            }
+            $this.status();
+
+        }
+    });
 /*
      $.post(this.urlStatus+'', params, function(_result){
      if(_result.success){
      }
      });
      /**/
+	 /*
     this.clearMarkers();
 
     var data = account2.body;
@@ -453,6 +506,7 @@ mapPosition.prototype.updateStatus = function (){
 
     this.events();
     this.drawPoints(this.map);
+	/**/
 }
 
 mapPosition.prototype.clearMarkers = function () {
